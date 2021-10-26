@@ -18,17 +18,17 @@ contract('TestERC721Mintable', (accounts) => {
       });
 
       // TODO: mint multiple tokens
-      for await (i of [...Array(tokenCount).keys()]) {
-        if (i < 8) {
-          this.contract.mint(account_one, i + 1, { from: account_one });
+      for (let i = 1; i <= tokenCount; i++) {
+        if (i < 9) {
+          await this.contract.mint(account_one, i, { from: account_one });
         } else {
-          this.contract.mint(account_two, i + 1, { from: account_one });
+          await this.contract.mint(account_two, i, { from: account_one });
         }
       }
     });
 
     it('should return total supply', async function () {
-      const count = await this.contract.totalSupply();
+      const count = await this.contract.totalSupply.call();
       assert.equal(
         Number(count),
         tokenCount,
@@ -37,14 +37,14 @@ contract('TestERC721Mintable', (accounts) => {
     });
 
     it('should get token balance', async function () {
-      const balance = await this.contract.balanceOf(account_one);
+      const balance = await this.contract.balanceOf.call(account_one);
       assert.equal(Number(balance), 8, `balance should be 8`);
     });
 
     // token uri should be complete i.e: https://s3-us-west-2.amazonaws.com/udacity-blockchain/capstone/1
     it('should return token uri', async function () {
       const tokenId = 1;
-      const tokenURI = await this.contract.tokenURI(tokenId);
+      const tokenURI = await this.contract.tokenURI.call(tokenId);
       assert.equal(
         tokenURI,
         `https://s3-us-west-2.amazonaws.com/udacity-blockchain/capstone/${tokenId}`,
